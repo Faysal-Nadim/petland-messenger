@@ -14,6 +14,14 @@ const chatRoomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    request: {
+      type: String,
+      required: true,
+    },
+    isQuoteSent: {
+      type: Boolean,
+      default: false,
+    },
     chats: [
       {
         sender: {

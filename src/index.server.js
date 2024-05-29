@@ -58,6 +58,25 @@ app.post("/api/v1/get-chat-by-user", (req, res) => {
   });
 });
 
+app.post("/api/v1/update-quote-state", (req, res) => {
+  Chat.findOneAndUpdate(
+    { ID: req.body.chatRoomID },
+    {
+      $set: {
+        isQuoteSent: true,
+      },
+    },
+    { new: true }
+  ).exec((error, chat) => {
+    if (error) {
+      return res.status(400).json({ msg: "Something Went Wrong", error });
+    }
+    if (chat) {
+      return res.status(201).json({ chat });
+    }
+  });
+});
+
 app.post("/api/v1/submit-msg", (req, res) => {
   const { sender, receiver, msgType, isFlagged, msg } = req.body;
   Chat.findOneAndUpdate(
