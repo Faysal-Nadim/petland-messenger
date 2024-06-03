@@ -10,7 +10,15 @@ const chatRoomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userOneName: {
+      type: String,
+      required: true,
+    },
     userTwo: {
+      type: String,
+      required: true,
+    },
+    userTwoName: {
       type: String,
       required: true,
     },
