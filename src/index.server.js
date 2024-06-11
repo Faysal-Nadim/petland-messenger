@@ -28,21 +28,46 @@ app.use(cors({ origin: "*" }));
 app.options("*", cors());
 app.use(express.json());
 
-app.get("/api/v1/create-chat", (req, res) => {
-  const _chatroom = new Chat({
-    ID: "404041",
-    userOne: "6644c62d7ffdae526c4f6681",
-    userTwo: "6644c6657ffdae526c4f6685",
-  });
+app.post("/api/v1/create-chat", (req, res) => {
+  const { userOne, userTwo, userOneName, userTwoName, request } = req.body;
 
-  _chatroom.save((error, chatroom) => {
-    if (error) {
-      return res.status(400).json({ msg: "Something Went Wrong" });
+  Chat.findOne({ userOne: userOne, userTwo: userTwo, request: request }).exec(
+    (error, chatroom) => {
+      if (error) {
+        return res.status(400).json({ msg: "Something Went Wrong" });
+      }
+      if (chatroom) {
+        return res.status(200).json(chatroom);
+      } else {
+        const _chatroom = new Chat({
+          ID: Math.floor(100000 + Math.random() * 900000),
+          userOne,
+          userTwo,
+          userOneName,
+          userTwoName,
+          request,
+          chats: [
+            {
+              sender: userTwo,
+              receiver: userOne,
+              msgType: "text",
+              isFlagged: false,
+              msg: "Hi",
+            },
+          ],
+        });
+
+        _chatroom.save((error, c) => {
+          if (error) {
+            return res.status(400).json({ msg: "Something Went Wrong" });
+          }
+          if (c) {
+            return res.status(201).json(c);
+          }
+        });
+      }
     }
-    if (chatroom) {
-      return res.status(201).json({ msg: "Chat Room Created" });
-    }
-  });
+  );
 });
 
 app.post("/api/v1/get-chat-by-user", (req, res) => {
@@ -78,9 +103,9 @@ app.post("/api/v1/update-quote-state", (req, res) => {
 });
 
 app.post("/api/v1/submit-msg", (req, res) => {
-  const { sender, receiver, msgType, isFlagged, msg } = req.body;
+  const { sender, receiver, msgType, isFlagged, msg, chatRoomID } = req.body;
   Chat.findOneAndUpdate(
-    { ID: "404040" },
+    { ID: chatRoomID },
     {
       $push: {
         chats: {
@@ -123,9 +148,9 @@ io.on("connection", (socket) => {
 
     // Save the message to MongoDB
 
-    const { sender, receiver, msgType, isFlagged, msg } = data;
+    const { sender, receiver, msgType, isFlagged, msg, chatRoomID } = data;
     Chat.findOneAndUpdate(
-      { ID: "404041" },
+      { ID: chatRoomID },
       {
         $push: {
           chats: {
