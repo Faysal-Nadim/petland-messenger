@@ -22,7 +22,13 @@ mongoose
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+
+const io = socketIO(server, {
+  cors: {
+    origin: "*", // Adjust this to be more restrictive in production
+    methods: ["GET", "POST"],
+  },
+});
 
 app.use(cors({ origin: "*" }));
 app.options("*", cors());
@@ -129,9 +135,9 @@ app.post("/api/v1/submit-msg", (req, res) => {
 });
 
 // Start the server
-server.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
-});
+// server.listen(process.env.PORT, () => {
+//   console.log(`Server running on port ${process.env.PORT}`);
+// });
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
@@ -142,8 +148,8 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Listen for incoming chat messages
-  socket.on("chat message", (data) => {
+  // Listen for incoming messages
+  socket.on("message", (data) => {
     console.log("Received message");
 
     // Save the message to MongoDB
@@ -164,10 +170,10 @@ io.on("connection", (socket) => {
       },
       { new: true }
     ).exec((error, chats) => {
-      io.emit("chat message", chats);
+      io.emit("message", chats);
     });
     // Broadcast the message to all connected clients
-    // io.emit("chat message", data);
+    // io.emit("message", data);
   });
 
   // Listen for user disconnection
@@ -175,3 +181,5 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
   });
 });
+
+// module.exports = app;
