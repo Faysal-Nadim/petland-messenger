@@ -134,11 +134,6 @@ app.post("/api/v1/submit-msg", (req, res) => {
   });
 });
 
-// Start the server
-// server.listen(process.env.PORT, () => {
-//   console.log(`Server running on port ${process.env.PORT}`);
-// });
-
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
@@ -182,4 +177,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// module.exports = app;
+// Start the server
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
+});
