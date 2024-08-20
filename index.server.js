@@ -129,7 +129,18 @@ app.post("/api/v1/submit-msg", (req, res) => {
       return res.status(400).json({ msg: "Something Went Wrong" });
     }
     if (chats) {
-      return res.status(201).json({ msg: "Chat Room Created" });
+      return res.status(201).json({ chats });
+    }
+  });
+});
+
+app.post("/api/v1/get-chat-by-id", (req, res) => {
+  Chat.findOne({ ID: req.body.ID }).exec((error, chat) => {
+    if (error) {
+      return res.status(400).json({ msg: "Something Went Wrong" });
+    }
+    if (chat) {
+      return res.status(201).json({ chat });
     }
   });
 });

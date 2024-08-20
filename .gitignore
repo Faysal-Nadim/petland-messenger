@@ -8,3 +8,5 @@ jspm_packages
 .env
 package-lock.json
 serverless.yml
+
+handler.js
