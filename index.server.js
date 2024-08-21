@@ -146,7 +146,7 @@ app.post("/api/v1/get-chat-by-id", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  // console.log("User connected:", socket.id);
 
   socket.on("chatroom", (data) => {
     Chat.findOne({ ID: data.ID }).exec((error, chat) => {
@@ -156,7 +156,7 @@ io.on("connection", (socket) => {
 
   // Listen for incoming messages
   socket.on("message", (data) => {
-    console.log("Received message");
+    // console.log("Received message");
 
     // Save the message to MongoDB
 
@@ -184,7 +184,7 @@ io.on("connection", (socket) => {
 
   // Listen for user disconnection
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    // console.log("User disconnected:", socket.id);
   });
 });
 
