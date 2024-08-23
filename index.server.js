@@ -154,10 +154,13 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("joinRoom", (data) => {
+    socket.join(data.chatRoomID);
+  });
+
   // Listen for incoming messages
   socket.on("message", (data) => {
     // console.log("Received message");
-
     // Save the message to MongoDB
 
     const { sender, receiver, msgType, isFlagged, msg, chatRoomID } = data;
@@ -176,7 +179,7 @@ io.on("connection", (socket) => {
       },
       { new: true }
     ).exec((error, chats) => {
-      socket.emit("message", chats);
+      socket.to(chatRoomID).emit("message", chats);
     });
     // Broadcast the message to all connected clients
     // io.emit("message", data);
