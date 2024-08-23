@@ -146,7 +146,7 @@ app.post("/api/v1/get-chat-by-id", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  // console.log("User connected:", socket.id);
+  console.log("User connected:", socket.id);
 
   socket.on("chatroom", (data) => {
     Chat.findOne({ ID: data.ID }).exec((error, chat) => {
@@ -154,8 +154,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("joinRoom", (data) => {
-    socket.join(data.chatRoomID);
+  socket.on("joinRoom", (chatRoomID) => {
+    socket.join(chatRoomID);
+    // socket.join(conversationId);
+    console.log(`Socket ${socket.id} joined room ${chatRoomID}`);
+
+    // Verify which rooms the socket is part of
+    console.log(socket.rooms); // Should include the room with conversationId
   });
 
   // Listen for incoming messages
@@ -164,6 +169,7 @@ io.on("connection", (socket) => {
     // Save the message to MongoDB
 
     const { sender, receiver, msgType, isFlagged, msg, chatRoomID } = data;
+
     Chat.findOneAndUpdate(
       { ID: chatRoomID },
       {
@@ -179,7 +185,7 @@ io.on("connection", (socket) => {
       },
       { new: true }
     ).exec((error, chats) => {
-      socket.to(chatRoomID).emit("message", chats);
+      io.in(chatRoomID).emit("message", chats);
     });
     // Broadcast the message to all connected clients
     // io.emit("message", data);
