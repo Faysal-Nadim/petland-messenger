@@ -176,7 +176,7 @@ io.on("connection", (socket) => {
       },
       { new: true }
     ).exec((error, chats) => {
-      io.emit("message", chats);
+      socket.emit("message", chats);
     });
     // Broadcast the message to all connected clients
     // io.emit("message", data);
