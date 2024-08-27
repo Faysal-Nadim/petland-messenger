@@ -35,7 +35,8 @@ app.options("*", cors());
 app.use(express.json());
 
 app.post("/api/v1/create-chat", (req, res) => {
-  const { userOne, userTwo, userOneName, userTwoName, request } = req.body;
+  const { userOne, userTwo, userOneName, userTwoName, request, type } =
+    req.body;
 
   Chat.findOne({ userOne: userOne, userTwo: userTwo, request: request }).exec(
     (error, chatroom) => {
@@ -52,6 +53,7 @@ app.post("/api/v1/create-chat", (req, res) => {
           userOneName,
           userTwoName,
           request,
+          type,
           chats: [
             {
               sender: userTwo,
@@ -146,8 +148,6 @@ app.post("/api/v1/get-chat-by-id", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
   socket.on("chatroom", (data) => {
     Chat.findOne({ ID: data.ID }).exec((error, chat) => {
       io.emit("chatroom", chat);
@@ -156,18 +156,10 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", (chatRoomID) => {
     socket.join(chatRoomID);
-    // socket.join(conversationId);
-    console.log(`Socket ${socket.id} joined room ${chatRoomID}`);
-
-    // Verify which rooms the socket is part of
-    console.log(socket.rooms); // Should include the room with conversationId
   });
 
   // Listen for incoming messages
   socket.on("message", (data) => {
-    // console.log("Received message");
-    // Save the message to MongoDB
-
     const { sender, receiver, msgType, isFlagged, msg, chatRoomID } = data;
 
     Chat.findOneAndUpdate(

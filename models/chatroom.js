@@ -26,6 +26,10 @@ const chatRoomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      enum: ["req", "stray"],
+    },
     isQuoteSent: {
       type: Boolean,
       default: false,
