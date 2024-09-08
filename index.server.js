@@ -35,8 +35,15 @@ app.options("*", cors());
 app.use(express.json());
 
 app.post("/api/v1/create-chat", (req, res) => {
-  const { userOne, userTwo, userOneName, userTwoName, request, type } =
-    req.body;
+  const {
+    userOne,
+    userTwo,
+    userOneName,
+    userTwoName,
+    request,
+    type,
+    isQuoteSent,
+  } = req.body;
 
   Chat.findOne({ userOne: userOne, userTwo: userTwo, request: request }).exec(
     (error, chatroom) => {
@@ -54,6 +61,7 @@ app.post("/api/v1/create-chat", (req, res) => {
           userTwoName,
           request,
           type,
+          isQuoteSent,
           chats: [
             {
               sender: userTwo,
