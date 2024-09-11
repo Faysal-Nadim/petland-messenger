@@ -38,6 +38,14 @@ const chatRoomSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    blockCount: {
+      type: Number,
+      default: 0,
+    },
     chats: [
       {
         sender: {

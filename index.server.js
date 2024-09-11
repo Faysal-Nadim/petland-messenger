@@ -199,7 +199,11 @@ io.on("connection", (socket) => {
             msgType: msgType,
             isFlagged: isFlagged,
             msg: msg,
+            isBlocked: isFlagged,
           },
+        },
+        $inc: {
+          blockCount: isFlagged ? 1 : 0,
         },
       },
       { new: true }
