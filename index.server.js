@@ -209,8 +209,19 @@ io.on("connection", (socket) => {
         },
       },
       { new: true }
-    ).exec((error, chats) => {
+    ).exec(async (error, chats) => {
       io.in(chatRoomID).emit("message", chats);
+      await fetch(
+        "https://51i5pi84pe.execute-api.me-central-1.amazonaws.com/production/api/v1/notification/msg",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            receiver: receiver,
+            msg: msg,
+          }),
+        }
+      );
     });
     // Broadcast the message to all connected clients
     // io.emit("message", data);
